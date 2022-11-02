@@ -52,11 +52,11 @@ func (ih IntHeap) Swap(i int, j int) {
 	ih[i], ih[j] = ih[j], ih[i]
 }
 
-func (ih *IntHeap) Push(x any) {
+func (ih *IntHeap) Push(x interface{}) {
 	*ih = append(*ih, x.(int))
 }
 
-func (ih *IntHeap) Pop() any {
+func (ih *IntHeap) Pop() interface{} {
 	old := *ih
 	n := len(old)
 	x := old[n-1]
