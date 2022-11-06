@@ -33,7 +33,7 @@ func restoreIpAddresses(s string) []string {
 
 				last, _ := strconv.Atoi(s[k:])
 				if last > 255 {
-					break
+					continue
 				}
 
 				ip := strings.Join(sliceItoa([]int{first, second, third, last}), ".")
