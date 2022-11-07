@@ -1,36 +1,42 @@
 package palindromepartitioning
 
 func partition(s string) [][]string {
-	if len(s) == 1 {
-		return [][]string{{s}}
-	}
+	var (
+		tempString []string
+		res        [][]string
+	)
 
-	res := make([][]string, 0)
-	var subRes [][]string
-	for i := range s {
-		if isPalindrome(s[:i+1]) {
-			if i == len(s)-1 {
-				res = append(res, []string{s[:i+1]})
-			} else {
-				subRes = partition(s[i+1:])
-				for j := range subRes {
-					res = append(res, append([]string{s[:i+1]}, subRes[j]...))
-				}
-			}
-		}
-	}
+	backTracking(s, tempString, 0, &res)
 	return res
 }
 
-func isPalindrome(s string) bool {
-	i, j := 0, len(s)-1
-	for i < j {
-		if s[i] != s[j] {
+func backTracking(s string, tempString []string, startIndex int, res *[][]string) {
+	if startIndex == len(s) {
+		t := make([]string, len(tempString))
+		copy(t, tempString)
+		*res = append(*res, t)
+	}
+
+	for i := startIndex; i < len(s); i++ {
+		if isPalindrome(s, startIndex, i) {
+			tempString = append(tempString, s[startIndex:i+1])
+		} else {
+			continue
+		}
+
+		backTracking(s, tempString, i+1, res)
+		tempString = tempString[:len(tempString)-1]
+	}
+}
+
+func isPalindrome(s string, startIndex, end int) bool {
+	for startIndex < end {
+		if s[startIndex] != s[end] {
 			return false
 		}
 
-		i++
-		j--
+		startIndex++
+		end--
 	}
 
 	return true
