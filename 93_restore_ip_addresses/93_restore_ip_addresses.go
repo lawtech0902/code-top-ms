@@ -5,53 +5,43 @@ import (
 	"strings"
 )
 
-// 暴力
 func restoreIpAddresses(s string) []string {
-	size := len(s)
-	res := make([]string, 0)
-	if size < 4 || size > 12 {
-		return res
-	}
+	var (
+		track []string
+		res   []string
+	)
 
-	for i := 1; i < size-2; i++ {
-		first, _ := strconv.Atoi(s[:i])
-		if first > 255 {
-			break
-		}
-
-		for j := i + 1; j < size-1; j++ {
-			second, _ := strconv.Atoi(s[i:j])
-			if second > 255 {
-				break
-			}
-
-			for k := j + 1; k < size; k++ {
-				third, _ := strconv.Atoi(s[j:k])
-				if third > 255 {
-					break
-				}
-
-				last, _ := strconv.Atoi(s[k:])
-				if last > 255 {
-					continue
-				}
-
-				ip := strings.Join(sliceItoa([]int{first, second, third, last}), ".")
-				if len(ip) == size+3 {
-					res = append(res, ip)
-				}
-			}
-		}
-	}
-
+	backTracking(s, 0, track, &res)
 	return res
 }
 
-func sliceItoa(nums []int) []string {
-	res := make([]string, 0)
-	for _, num := range nums {
-		res = append(res, strconv.Itoa(num))
+func backTracking(s string, startIndex int, track []string, res *[]string) {
+	if startIndex == len(s) && len(track) == 4 {
+		temp := strings.Join(track, ".")
+		*res = append(*res, temp)
 	}
 
-	return res
+	for i := startIndex; i < len(s); i++ {
+		track = append(track, s[startIndex:i+1])
+		if i-startIndex+1 <= 3 && len(track) <= 4 && isValidIp(s, startIndex, i) {
+			backTracking(s, i+1, track, res)
+		} else {
+			return
+		}
+
+		track = track[:len(track)-1]
+	}
+}
+
+func isValidIp(s string, startIndex, end int) bool {
+	val, _ := strconv.Atoi(s[startIndex : end+1])
+	if end-startIndex+1 > 1 && s[startIndex] == '0' {
+		return false
+	}
+
+	if val > 255 {
+		return false
+	}
+
+	return true
 }
